@@ -1,0 +1,253 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- Custom CSS for Luxurious Black & Gold Design -->
+<style>
+    body {
+        background-color: #1e1e1e;  /* Dark charcoal */
+        font-family: 'Poppins', sans-serif;
+        color: #f5f5f5; /* Soft white for text */
+        transition: background 0.3s, color 0.3s;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        background-color: #000000; /* Pure black */
+        height: 100vh;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 10px;
+        transition: all 0.3s;
+        overflow-y: auto;
+        border-right: 2px solid #f1c40f; /* Gold border */
+    }
+
+    .sidebar.collapsed {
+        width: 70px;
+    }
+
+    /* Toggle button styling */
+    .toggle-sidebar {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: none;
+        border: none;
+        color: #f5f5f5;
+        font-size: 24px;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .toggle-sidebar:hover {
+        color: #f1c40f; /* Gold hover effect */
+    }
+
+    .sidebar .nav-link {
+        color: #dcdcdc;
+        padding: 15px 10px;
+        margin: 5px 0;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    .sidebar .nav-link i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .sidebar .nav-link:hover {
+        background-color: #2c2c2c; /* Charcoal hover */
+        color: #f1c40f; /* Gold hover */
+    }
+
+    .sidebar.collapsed .nav-link span {
+        display: none;
+    }
+
+    .sidebar.collapsed .nav-link i {
+        margin: 0 auto;
+    }
+
+    /* Main Content Styling */
+    .main-content {
+        margin-left: 250px;
+        padding: 30px;
+        transition: margin-left 0.3s;
+    }
+
+    .main-content.collapsed {
+        margin-left: 70px;
+    }
+
+    .content-header h1 {
+        font-size: 2.5em;
+        font-weight: 700;
+        color: #f1c40f; /* Gold */
+        margin-bottom: 10px;
+    }
+
+    .content-header p {
+        font-size: 1.1em;
+        color: #dcdcdc;
+        margin-bottom: 20px;
+    }
+
+    /* Button Styling */
+    .btn-custom {
+        background-color: #f1c40f; /* Gold */
+        color: #000000; /* Black text */
+        border: none;
+        border-radius: 5px;
+        padding: 12px 20px;
+        font-size: 16px;
+        margin: 5px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-custom:hover {
+        background-color: #d4ac0d; /* Darker gold */
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Card Styling */
+    .card-glass {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card-glass:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Chart Container Styling */
+    .chart-container {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #1e1e1e;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Footer Styling */
+    footer {
+        text-align: center;
+        color: #777;
+        padding: 20px 0;
+        position: fixed;
+        bottom: 0;
+        left: 250px;
+        right: 0;
+        background-color: #000000; /* Black */
+        border-top: 2px solid #f1c40f; /* Gold border */
+    }
+</style>
+
+<!-- Sidebar -->
+
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="content-header">
+        <h1>Web-based ERP Dashboard</h1>
+        <p class="lead">Manage everything in one place with a streamlined dark theme.</p>
+    </div>
+
+    <!-- Key Action Buttons -->
+    <div class="d-flex flex-wrap mb-4">
+        {% if approved_requests_count > 0 %}
+            <button class="btn-custom" onclick="location.href='{% url 'requested_inventory' %}'">
+                Show Products
+            </button>
+        {% endif %}
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card-glass">
+                <h5>Total Sales</h5>
+                <p class="text-warning">$150,000 <span class="text-muted">(+25%)</span></p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-glass">
+                <h5>Inventory</h5>
+                <p>500 Units</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Charts -->
+    <div class="row">
+        <div class="col-md-6 chart-container">
+            <canvas id="salesChart"></canvas>
+        </div>
+        <div class="col-md-6 chart-container">
+            <canvas id="inventoryChart"></canvas>
+        </div>
+    </div>
+</main>
+
+<!-- Chart.js Script for Dynamic Charts -->
+<script>
+    const salesChart = new Chart(document.getElementById('salesChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Sales',
+                data: [150, 200, 250, 300, 350, 400],
+                borderColor: '#f1c40f', /* Gold line */
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    const inventoryChart = new Chart(document.getElementById('inventoryChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Product A', 'Product B', 'Product C'],
+            datasets: [{
+                label: 'Stock',
+                data: [100, 150, 80],
+                backgroundColor: ['#f1c40f', '#f1c40f', '#f1c40f'] /* Gold bars */
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('collapsed');
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

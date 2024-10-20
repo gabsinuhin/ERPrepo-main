@@ -1,0 +1,103 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5" style="color: gold;">
+    <h2 class="text-center mb-4" style="color: gold; text-shadow: 1px 1px 2px black;">Requested Products</h2>
+
+    {% if requested_products %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered" style="background-color: black; color: gold; border: 1px solid gold;">
+                <thead>
+                    <tr style="background-color: gold; color: black;">
+                        <th scope="col">Product Image</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Quantity Requested</th>
+                        <th scope="col">Date Requested</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requested_products %}
+                    <tr style="border-color: gold;">
+                        <td class="text-center">
+                            {% if request.product.image %}
+                                <img src="{{ request.product.image.url }}" alt="{{ request.product.name }}"
+                                     style="width: 100px; height: auto; object-fit: contain; border: 1px solid gold;">
+                            {% else %}
+                                <img src="{% static 'path/to/default/image.png' %}" alt="No Image"
+                                     style="width: 100px; height: auto; object-fit: contain; border: 1px solid gold;">
+                            {% endif %}
+                        </td>
+                        <td>{{ request.product.name }}</td>
+                        <td>{{ request.quantity_requested }}</td>
+                        <td>{{ request.created_at|date:"F d, Y H:i" }}</td>
+                        <td>
+                            {% if request.status == 'approved' %}
+                                <span class="badge" style="background-color: green; color: gold;">Approved</span>
+                            {% elif request.status == 'pending' %}
+                                <span class="badge" style="background-color: gold; color: black;">Pending</span>
+                                <span class="text-muted">Waiting for approval</span>
+                            {% elif request.status == 'declined' %}
+                                <span class="badge" style="background-color: red; color: gold;">Declined</span>
+                            {% elif request.status == 'paid' %}
+                                <span class="badge" style="background-color: blue; color: gold;">Paid</span>
+                            {% else %}
+                                <span class="badge" style="background-color: gray; color: gold;">Unknown</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if request.status == 'approved' %}
+                                <form method="GET" action="{% url 'checkout' request.id %}" class="d-inline">
+                                    <button type="submit" class="btn"
+                                            style="background-color: green; color: gold; border: 1px solid gold;">
+                                        Proceed to Checkout
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'cancel_request' request.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this request?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn"
+                                            style="background-color: red; color: gold; border: 1px solid gold;">
+                                        Cancel Request
+                                    </button>
+                                </form>
+                            {% elif request.status == 'pending' %}
+                                <form method="POST" action="{% url 'cancel_request' request.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this request?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn"
+                                            style="background-color: red; color: gold; border: 1px solid gold;">
+                                        Cancel Request
+                                    </button>
+                                </form>
+                            {% elif request.status == 'declined' %}
+                                <form method="POST" action="{% url 'cancel_request' request.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this request?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn"
+                                            style="background-color: red; color: gold; border: 1px solid gold;">
+                                        Remove
+                                    </button>
+                                </form>
+                            {% elif request.status == 'paid' %}
+                                <a href="{% url 'receipt' request.id %}" class="btn"
+                                   style="background-color: blue; color: gold; border: 1px solid gold;">
+                                    View Receipt
+                                </a>
+                                <a href="{% url 'request_credit_memo' request.id %}" class="btn"
+                                   style="background-color: blue; color: gold; border: 1px solid gold;">
+                                    Request Credit Memo
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" style="background-color: black; color: gold; border: 1px solid gold;">
+            <p>No product requests found.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

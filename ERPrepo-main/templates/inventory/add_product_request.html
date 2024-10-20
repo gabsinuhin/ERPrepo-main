@@ -1,0 +1,38 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5" style="color: gold;">
+    <h2 style="color: gold; text-shadow: 1px 1px 2px black;">Request a Product</h2>
+
+    <!-- Form for submitting a product request -->
+    <form method="POST" style="background-color: black; padding: 20px; border-radius: 10px;">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="product" class="form-label" style="color: gold;">Select Product:</label>
+            <select class="form-select" id="product" name="product_name" required
+                style="background-color: black; color: gold; border: 1px solid gold;">
+                <option value="">-- Choose a Product --</option>
+                <!-- Loop through the products to display them in the dropdown -->
+                {% for product in products %}
+                    <option value="{{ product.id }}" style="background-color: black; color: gold;">
+                        {{ product.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="quantity" class="form-label" style="color: gold;">Quantity:</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" min="1" required
+                style="background-color: black; color: gold; border: 1px solid gold;">
+        </div>
+
+        <button type="submit" class="btn"
+                style="background-color: gold; color: black; border: 1px solid gold; font-weight: bold;">
+            Submit Request
+        </button>
+    </form>
+</div>
+{% endblock %}

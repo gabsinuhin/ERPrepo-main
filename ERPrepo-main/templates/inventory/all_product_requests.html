@@ -1,0 +1,71 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5" style="color: #DAA520;"> <!-- Darker gold -->
+    <h2 style="color: #DAA520; text-shadow: 1px 1px 2px black;">All Product Requests</h2>
+
+    <table class="table table-bordered" style="background-color: #222; color: #DAA520;"> <!-- Darker background and gold -->
+        <thead>
+            <tr style="background-color: #DAA520; color: black;">
+                <th>User</th>
+                <th>Product</th>
+                <th>Quantity Requested</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in requested_products %}
+                <tr style="border-color: #DAA520;"> <!-- Darker gold -->
+                    <td>{{ request.user.username }}</td>
+                    <td>{{ request.product.name }}</td>
+                    <td>{{ request.quantity_requested }}</td>
+                    <td>
+                        {% if request.status == 'pending' %}
+                            <span class="badge" style="background-color: #DAA520; color: black;"> <!-- Darker gold -->
+                                {{ request.status }}
+                            </span>
+                        {% else %}
+                            <span class="badge" style="background-color: #555; color: #DAA520;"> <!-- Dark gray -->
+                                {{ request.status }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if request.status == 'pending' %}
+                            <form action="{% url 'approve_request' request.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm"
+                                        style="background-color: #DAA520; color: black; border: 1px solid #DAA520;"> <!-- Darker gold -->
+                                    Approve
+                                </button>
+                            </form>
+                            <form action="{% url 'decline_request' request.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm"
+                                        style="background-color: #222; color: #DAA520; border: 1px solid #DAA520;"> <!-- Darker black -->
+                                    Decline
+                                </button>
+                            </form>
+                        {% endif %}
+                        <!-- Delete button for all statuses -->
+                        <form action="{% url 'delete_product_request' request.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm"
+                                    style="background-color: #222; color: #DAA520; border: 1px solid #DAA520;"
+                                    onclick="return confirm('Are you sure you want to delete this request?');">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #DAA520;">No product requests available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Include Bootstrap for styling -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'css/main.css' %}"> <!-- Include custom CSS -->
+
+<style>
+    body {
+        background-color: #111; /* Dark background */
+        color: #f1c40f; /* Gold text color */
+    }
+
+    .main-content {
+        width: 80%;
+        max-width: 800px;
+        padding: 10px;
+        background-color: #222; /* Dark card background */
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        margin: 30px auto; /* Center the card */
+    }
+
+    h2 {
+        color: #f1c40f; /* Gold color for heading */
+        margin-bottom: 30px; /* Space below the heading */
+    }
+
+    .table {
+        background-color: #333; /* Darker table background */
+        border-collapse: collapse; /* Collapse borders for better alignment */
+    }
+
+    .table th, .table td {
+        padding: 12px; /* Increased padding for better spacing */
+        text-align: center; /* Centered text in table cells */
+    }
+
+    .thead-dark th {
+        background-color: #444; /* Darker header */
+        color: #f1c40f; /* Gold text in header */
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #282828; /* Darker stripe for odd rows */
+    }
+
+    .badge-warning {
+        background-color: #e0a800; /* Darker gold for warning */
+    }
+
+    .btn-success {
+        background-color: #f1c40f; /* Gold button */
+        border: none; /* No border */
+    }
+
+    .btn-danger {
+        background-color: #e74c3c; /* Red for decline */
+        border: none; /* No border */
+    }
+
+    .btn-success:hover, .btn-danger:hover {
+        opacity: 0.8; /* Slightly transparent on hover */
+    }
+
+    .alert {
+        color: #000; /* Dark text for alerts */
+    }
+
+    .alert-success {
+        background-color: rgba(50, 205, 50, 0.2); /* Light green */
+        color: #000; /* Dark text */
+    }
+
+    .alert-danger {
+        background-color: rgba(255, 0, 0, 0.2); /* Light red */
+        color: #000; /* Dark text */
+    }
+
+    /* New styles for User, Item, and Date text color */
+    .table td.user-item-date {
+        color: #fff; /* White color for User, Item, and Date */
+    }
+
+    /* SweetAlert styles */
+    .swal2-confirm {
+        background-color: #f1c40f; /* Gold button */
+        color: #000; /* Text color */
+    }
+
+    .swal2-cancel {
+        background-color: #d9534f; /* Red cancel button */
+        color: #fff; /* White text */
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-start min-vh-100">
+    <div class="main-content">
+        <h2 class="text-center">User Requests</h2>
+
+        <!-- Success/Error Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Item</th>
+                    <th>Status</th>
+                    <th>Date Requested</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <td class="user-item-date">{{ request.user.username }}</td>
+                    <td class="user-item-date">{{ request.item }}</td>
+                    <td>
+                        {% if request.status == "inventory_pending" %}
+                            <span class="badge badge-warning">{{ request.status }}</span> <!-- Yellow for pending -->
+                        {% elif request.status == "inventory_approved" %}
+                            <span class="badge badge-success">{{ request.status }}</span> <!-- Green for approved -->
+                        {% elif request.status == "inventory_declined" %}
+                            <span class="badge badge-danger">{{ request.status }}</span> <!-- Red for declined -->
+                        {% endif %}
+                    </td>
+                    <td class="user-item-date">{{ request.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        {% if request.status == "inventory_pending" %}
+                            <form action="{% url 'approve_inventory_request' request.id %}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to approve this request?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                            <form action="{% url 'decline_inventory_request' request.id %}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to decline this request?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                            </form>
+                        {% endif %}
+                        {% if user.is_superuser %}
+                        <button class="btn btn-danger btn-sm" onclick="confirmRemoval('{% url 'delete_inventory_request' request.id %}')">Remove Request/Access</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No requests available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div> <!-- End of main content div -->
+</div>
+
+<!-- SweetAlert2 CDN for confirmation dialog -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    function confirmRemoval(url) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f1c40f',
+            cancelButtonColor: '#d9534f',
+            confirmButtonText: 'Yes, remove it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Create a form and submit it
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = url;
+
+                // Include CSRF token
+                const csrfToken = '{{ csrf_token }}';
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'csrfmiddlewaretoken';
+                input.value = csrfToken;
+
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit(); // Submit the form
+            }
+        });
+    }
+</script>
+
+{% endblock %}

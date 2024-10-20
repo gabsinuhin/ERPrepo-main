@@ -1,0 +1,37 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="container mt-5" style="color: gold;">
+    <h2 class="text-center mb-4" style="color: gold; text-shadow: 1px 1px 2px black;">Request Credit Memo</h2>
+    <div class="card" style="background-color: black; border: 1px solid gold;">
+        <div class="card-body">
+            <h5 class="card-title" style="color: gold;">Product: {{ product_request.product.name }}</h5>
+            <p class="card-text"><strong>Order Date:</strong> {{ product_request.created_at|date:"F d, Y H:i" }}</p>
+            <p class="card-text"><strong>Quantity Requested:</strong> {{ product_request.quantity_requested }}</p>
+            <hr style="border-color: gold;">
+
+            <form method="post" style="color: gold;">
+                {% csrf_token %}
+                <!-- Render form fields with custom styles -->
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+
+                <div class="alert alert-warning" role="alert" style="background-color: black; color: gold; border: 1px solid gold;">
+                    <strong>Important Note:</strong> If you choose a quantity of <strong>0</strong>, please be aware that you will still incur a shipping fee. This is because shipping costs are applied based on your order's overall processing, not just the product quantity. Additionally, tax will still be incurred.
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn"
+                            style="background-color: gold; color: black; font-weight: bold; border: 1px solid gold;">
+                        Submit Credit Memo Request
+                    </button>
+                    <a href="{% url 'receipt' product_request.id %}" class="btn"
+                       style="background-color: black; color: gold; font-weight: bold; border: 1px solid gold;">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

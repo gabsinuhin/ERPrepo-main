@@ -1,0 +1,120 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="color: gold;">
+    <h2 class="text-center mb-4" style="color: gold; text-shadow: 1px 1px 2px black;">All Users</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered" style="background-color: black; color: gold; border: 1px solid gold;">
+            <thead>
+                <tr style="background-color: gold; color: black;">
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Full Name</th>
+                    <th>Company Name</th>
+                    <th>Mobile Number</th>
+                    <th>Business Title</th>
+                    <th>Balance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    {% for profile in user_profiles %}
+                        {% if profile.user.id == user.id %}
+                        <tr style="border-color: gold;">
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ profile.full_name }}</td>
+                            <td>{{ profile.company_name }}</td>
+                            <td>{{ profile.mobile_number }}</td>
+                            <td>{{ profile.business_title }}</td>
+                            <td>
+                                <form method="POST" class="d-inline-flex">
+                                    {% csrf_token %}
+                                    <input type="text" name="balance_{{ profile.user.id }}" value="{{ profile.balance }}"
+                                           class="form-control form-control-sm"
+                                           style="background-color: black; color: gold; border: 1px solid gold; width: 100px;">
+                            </td>
+                            <td>
+                                <button type="submit" name="user_id" value="{{ profile.user.id }}"
+                                        class="btn btn-sm" style="background-color: gold; color: black; border: 1px solid gold;">
+                                    Update
+                                </button>
+                                </form>
+                                <button class="btn btn-sm" data-toggle="modal" data-target="#confirmationModal"
+                                        data-user-id="{{ profile.user.id }}" data-user-name="{{ user.username }}"
+                                        style="background-color: red; color: white; border: 1px solid red;">
+                                    Terminate
+                                </button>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center" style="color: gold;">No users found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="background-color: black; color: gold; border: 1px solid gold;">
+      <div class="modal-header" style="border-bottom: 1px solid gold;">
+        <h5 class="modal-title" id="confirmationModalLabel">Confirm Termination</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: gold;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmationMessage"></p>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid gold;">
+        <button type="button" class="btn" data-dismiss="modal" style="background-color: black; color: gold; border: 1px solid gold;">
+            Cancel
+        </button>
+        <button type="button" id="confirmButton" class="btn" style="background-color: red; color: white; border: 1px solid red;">
+            Terminate
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $('#confirmationModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const userId = button.data('user-id');
+        const userName = button.data('user-name');
+        const message = `Are you sure you want to terminate the account of ${userName}? This action cannot be undone.`;
+
+        const modal = $(this);
+        modal.find('.modal-body #confirmationMessage').text(message);
+
+        modal.find('#confirmButton').off('click').on('click', function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `{% url 'terminate_account' 0 %}`.replace("0", userId);
+
+            const csrfToken = '{{ csrf_token }}';
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'csrfmiddlewaretoken';
+            input.value = csrfToken;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        });
+    });
+</script>
+
+{% endblock %}

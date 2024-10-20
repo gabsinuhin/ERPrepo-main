@@ -1,0 +1,107 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-4"> <!-- Adjusted margin for higher positioning -->
+    <h2 class="mb-5 text-center" style="color: #FFD700; font-weight: bold; text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);">All Messages</h2>
+
+    {% if messages %}
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-group">
+                    {% for message in messages %}
+                        <li class="list-group-item mb-4 p-4 border rounded" style="background: linear-gradient(145deg, #1a1a1a, #000); color: #FFD700; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);">
+                            <div class="mb-3">
+                                <strong>Sent by:</strong> <span class="text-success">{{ message.user.username }}</span><br>
+                                <strong>Message:</strong> <span>{{ message.content }}</span><br>
+                                <strong>Sent on:</strong> <span class="text-muted">{{ message.created_at|date:"M d, Y, H:i" }}</span>
+                            </div>
+
+                            <!-- Check if the message has an image -->
+                            {% if message.image %}
+                                <div class="mt-2">
+                                    <strong>Image:</strong><br>
+                                    <img src="{{ message.image.url }}" alt="Message Image" class="img-fluid rounded" style="max-height: 200px; max-width: 100%; object-fit: cover; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);">
+                                </div>
+                            {% endif %}
+
+                            <!-- Display replies for this message -->
+                            {% if message.replies.all %}
+                                <h5 class="mt-4" style="color: #FFD700; font-weight: bold;">Replies:</h5>
+                                <ul class="list-group mt-2">
+                                    {% for reply in message.replies.all %}
+                                        <li class="list-group-item mb-2 p-2 border rounded" style="background: #1a1a1a; color: #FFD700;">
+                                            <strong>Reply by:</strong> <span class="text-info">{{ reply.user.username }}</span><br>
+                                            <strong>Reply:</strong> <span>{{ reply.content }}</span><br>
+                                            <strong>Replied on:</strong> <span class="text-muted">{{ reply.created_at|date:"M d, Y, H:i" }}</span>
+
+                                            <!-- Check if the reply has an image -->
+                                            {% if reply.image %}
+                                                <div class="mt-2">
+                                                    <strong>Image:</strong><br>
+                                                    <img src="{{ reply.image.url }}" alt="Reply Image" class="img-fluid rounded" style="max-height: 200px; max-width: 100%; object-fit: cover; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);">
+                                                </div>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="mt-2 text-muted">No replies yet.</p>
+                            {% endif %}
+
+                            <!-- Reply Form for the current message -->
+                            <form action="{% url 'add_reply' message.id %}" method="POST" enctype="multipart/form-data" class="mt-4">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="reply-content" style="color: #FFD700;">Your Reply:</label>
+                                    <textarea name="content" class="form-control" style="background: #000; color: #FFD700; border: 1px solid #FFD700;" placeholder="Type your reply here..." required></textarea>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="image" style="color: #FFD700;">Upload an image (optional):</label>
+                                    <input type="file" name="image" accept="image/*" class="form-control" style="background: #000; color: #FFD700; border: 1px solid #FFD700;">
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3" style="background: linear-gradient(to right, #FFD700, #e6ac00); color: black; border: none; border-radius: 30px; font-weight: bold; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.7);">
+                                    Reply
+                                </button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-center text-muted">No messages found.</p>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        animation: fadeIn 1s ease; /* Smooth fade-in animation */
+    }
+
+    .list-group-item {
+        transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        transform: scale(1.02); /* Slight scaling effect on hover */
+        box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5); /* Brighter glow */
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(to right, #e6ac00, #cc9a00); /* Darker gold */
+        box-shadow: 0 10px 35px rgba(255, 215, 0, 0.9); /* Brighter glow */
+        transform: scale(1.05); /* Slight scale */
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

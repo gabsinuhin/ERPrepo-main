@@ -1,0 +1,152 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="color: gold;">
+    <h2 class="mb-4 text-center" style="color: gold; text-shadow: 1px 1px 2px black;">All Products</h2>
+
+    <!-- Search Bar -->
+    <form method="GET" action="{% url 'search_products' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control" placeholder="Search for products..." value="{{ query }}"
+                   style="background-color: black; color: gold; border: 1px solid gold;">
+            <div class="input-group-append">
+                <button class="btn" type="submit" style="background-color: gold; color: black; border: 1px solid gold;">
+                    Search
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Success Message for Specific Updates -->
+    {% if messages %}
+    {% for message in messages %}
+        {% if 'stock_update' in message.tags %}
+            <div class="alert alert-success" style="background-color: black; color: gold; border: 1px solid gold;">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- Product List -->
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card" style="background-color: black; border: 1px solid gold;">
+                <div class="card-body">
+                    <h5 class="card-title" style="color: gold;">{{ product.name }}</h5>
+                    <p class="card-text">SKU: {{ product.sku }}</p>
+                    <p class="card-text formatted-price" data-price="{{ product.price }}">Price: ${{ product.price|floatformat:2 }}</p>
+                    <p class="card-text">Available Stock: {{ product.quantity }}</p>
+                    <p class="card-text">Description: {{ product.description }}</p>
+
+                    <!-- Display Product Image -->
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid mb-3" style="border: 1px solid gold;">
+                    {% endif %}
+
+                    <!-- Check and display low stock warning -->
+                    {% if product.quantity == 0 %}
+                        <p class="text-danger" style="color: red;">Out of Stock</p>
+                    {% elif product.quantity < 10 %}
+                        <p class="text-danger" style="color: red;">Low on stock!</p>
+                    {% endif %}
+
+                    <!-- Product Request Form with Confirmation -->
+                    <form method="POST" action="{% url 'add_product_request' %}" class="request-form" onsubmit="return confirm('Are you sure you want to request this product?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_name" value="{{ product.id }}">
+                        <div class="input-group mb-2">
+                            <input type="number" name="quantity" class="form-control quantity-input" data-price="{{ product.price }}" min="1" value="1" required
+                            style="background-color: black; color: gold; border: 1px solid gold;"
+                            {% if product.quantity == 0 %} disabled {% endif %}
+                            oninput="updateTotalCost(this, {{ product.price }})">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn"
+                                        style="background-color: gold; color: black; border: 1px solid gold;"
+                                        {% if product.quantity == 0 %} disabled {% endif %} data-stock="{{ product.quantity }}">
+                                    Add to Request
+                                </button>
+                            </div>
+                        </div>
+                        <p class="card-text">Total Cost: $<span class="total-cost">0.00</span></p>
+                    </form>
+
+                    {% if user.is_superuser %}
+                    <div class="mt-3"></div>
+                    <form method="POST" action="{% url 'update_stock' product.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <div class="form-group mb-2">
+                            <span class="ml-2" style="color: gold;">Stock</span>
+                            <input type="number" name="stock_change" class="form-control" min="-{{ product.quantity }}" value="0" required placeholder="Change Stock"
+                                   style="background-color: black; color: gold; border: 1px solid gold;">
+                        </div>
+                        <button type="submit" class="btn btn-sm" style="background-color: gold; color: black; border: 1px solid gold;">
+                            Update Stock
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'update_product' product.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <div class="form-group mb-2">
+                            <span class="ml-2" style="color: gold;">Name</span>
+                            <input type="text" name="name" class="form-control" value="{{ product.name }}" required placeholder="Name"
+                                   style="background-color: black; color: gold; border: 1px solid gold;">
+                        </div>
+                        <div class="form-group mb-2">
+                            <span class="ml-2" style="color: gold;">SKU</span>
+                            <input type="text" name="sku" class="form-control" value="{{ product.sku }}" required placeholder="SKU"
+                                   style="background-color: black; color: gold; border: 1px solid gold;">
+                        </div>
+                        <div class="form-group mb-2">
+                            <span class="ml-2" style="color: gold;">Price</span>
+                            <input type="number" name="price" class="form-control" value="{{ product.price }}" min="0.01" step="0.01" required placeholder="Price"
+                                   style="background-color: black; color: gold; border: 1px solid gold;">
+                        </div>
+                        <div class="form-group mb-2">
+                            <span class="ml-2" style="color: gold;">Description</span>
+                            <input type="text" name="description" class="form-control" value="{{ product.description }}" placeholder="Description" required
+                                   style="background-color: black; color: gold; border: 1px solid gold;">
+                        </div>
+                        <button type="submit" class="btn btn-sm" style="background-color: gold; color: black; border: 1px solid gold;">
+                            Update
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'delete_product' product.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm" style="background-color: red; color: white; border: 1px solid red;">
+                            Delete
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center" style="color: gold;">No products available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function updateTotalCost(input, price) {
+        const quantity = input.value;
+        const totalCostElement = input.closest('form').querySelector('.total-cost');
+        const totalCost = (quantity * price).toFixed(2);
+        totalCostElement.textContent = totalCost;
+
+        // Get the product stock from the data attribute
+        const availableStock = parseInt(input.closest('form').querySelector('.request-btn').dataset.stock, 10);
+
+        // Get the request button
+        const requestButton = input.closest('form').querySelector('.request-btn');
+
+        // Enable/disable the button based on quantity and available stock
+        if (quantity > availableStock) {
+            requestButton.disabled = true;
+        } else {
+            requestButton.disabled = false;
+        }
+    }
+</script>
+
+{% endblock %}

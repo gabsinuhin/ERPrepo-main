@@ -1,0 +1,103 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-light">Add New Product</h2>
+
+    <!-- Success/Error Messages -->
+
+
+    <div class="atm-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-block">Add Product</button>
+        </form>
+        <a href="{% url 'homepage' %}" class="btn btn-secondary">Back to Inventory</a>
+    </div>
+</div>
+
+<style>
+    /* General body styling */
+    body {
+        background-color: #343a40; /* Dark background */
+        color: #f1c40f; /* Gold color for text */
+    }
+
+    /* Card styling */
+    .atm-card {
+        max-width: 600px; /* Increased width */
+        margin: 0 auto;
+        padding: 30px;
+        border-radius: 15px;
+        background: linear-gradient(145deg, #444d56, #353b43);
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+        margin-top: 20px; /* Spacing above the card */
+    }
+
+    h2 {
+        color: #f1c40f; /* Gold color for heading */
+    }
+
+    .alert {
+        margin-bottom: 20px; /* Spacing below alerts */
+    }
+
+    /* Form control styling */
+    .form-control {
+        width: 100%; /* Ensure full width */
+        height: 50px; /* Increased height for visibility */
+        font-size: 1rem; /* Standard font size */
+        border-radius: 5px;
+        border: 2px solid #f1c40f; /* Gold border */
+        padding: 0 10px;
+        background-color: #222; /* Dark input background */
+        color: #f1c40f; /* Gold text color */
+        transition: border-color 0.3s, background-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #d4ac0d; /* Darker gold on focus */
+        background-color: #333; /* Slightly lighter black */
+    }
+
+    /* Button styling */
+    .btn-block {
+        width: 100%;
+        background-color: #f1c40f; /* Gold color for button */
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.2s;
+        color: #000; /* Text color for button */
+        padding: 12px; /* Added padding */
+        font-size: 16px; /* Font size */
+        font-weight: bold; /* Font weight */
+    }
+
+    .btn-block:hover {
+        background-color: #d4ac0d; /* Darker gold on hover */
+    }
+
+    .btn-secondary {
+        background-color: #333; /* Dark grey */
+        border-color: #444;
+        color: #f1c40f;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        margin-top: 10px;
+        display: block;
+        text-align: center;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #444; /* Slightly lighter grey */
+        color: #f7d78d; /* Light gold */
+    }
+</style>
+
+{% endblock %}

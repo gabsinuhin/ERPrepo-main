@@ -1,0 +1,95 @@
+{% extends 'users/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid" style="display: flex; height: 100vh; overflow: hidden;">
+    <!-- Main Content -->
+    <main class="main-content" style="width: 80%; padding: 0px; overflow-y: auto;">
+        <h2 class="text-center" style="color: #ffffff; margin-bottom: 30px;">Inventory Management Report</h2>
+
+        <!-- Real-Time Inventory Overview Section -->
+        <div class="mt-4" style="background-color: #2a2a2e; padding: 20px; border-radius: 10px; color: #f0f0f0;">
+            <h4>Real-Time Inventory Overview</h4>
+            <p style="margin-top: 10px;">Check the latest inventory book in real-time through ECOUNT's inventory management system. The increase and decrease of inventory will be calculated automatically when sales, purchases, or production slips are entered.</p>
+            <ul style="margin-top: 10px;">
+                <li>Real-time inventory updates</li>
+                <li>Automatic inventory report generation</li>
+                <li>Reports reflect sales, purchases, and production slips on inventory balance, inventory book, etc.</li>
+            </ul>
+            <p style="margin-top: 10px;">ECOUNT is a web-based system that allows you to view inventory books outside of the work area using a PC, laptop, or mobile device.</p>
+        </div>
+
+        <!-- Customizable Reporting Section -->
+        <div class="mt-4" style="background-color: #2a2a2e; padding: 20px; border-radius: 10px; color: #f0f0f0;">
+            <h4>Customizable Reporting</h4>
+            <p style="margin-top: 10px;">Customize the report template by adding fields like item images, available balance, etc. Limit the report template visibility based on user ID.</p>
+            <ul style="margin-top: 10px;">
+                <li>Add customized fields to the report</li>
+                <li>Automatically send the latest inventory balance report</li>
+                <li>Receive notifications of the inventory status based on specific conditions</li>
+            </ul>
+            <p style="margin-top: 10px;">Check the latest inventory quantity to immediately respond to situations and share work progress.</p>
+
+            <!-- Request Inventory Report Button -->
+            <button class="btn btn-warning btn-lg mt-3" onclick="confirmRequest()" style="background-color: #f39c12; border: none; color: #ffffff; padding: 10px 20px; border-radius: 5px; transition: 0.3s;">
+                Request Inventory Report
+            </button>
+
+            <!-- Request List -->
+            <ul id="request-list" class="list-group mt-3" style="margin-top: 20px;">
+                <!-- Existing requests will be dynamically added here -->
+            </ul>
+        </div>
+    </main>
+</div>
+
+<script>
+    function confirmRequest() {
+        if (confirm("Do you want to submit this request?")) {
+            const itemName = "Inventory";  // Automatic item name
+
+            console.log("Item Name:", itemName); // Log the item name for debugging
+
+            // Send an AJAX request to save the request
+            fetch("{% url 'submit_inventory_request' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',  // Ensure CSRF token is included
+                },
+                body: JSON.stringify({ item: itemName })  // Send the actual item data
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response Data:", data); // Log the response data for debugging
+                if (data.status === 'success') {
+                    alert("Request submitted successfully!");
+                    // Dynamically add the new request to the list
+                    const requestList = document.getElementById('request-list');
+                    const newRequestItem = document.createElement('li');
+                    newRequestItem.textContent = `${data.date} - ${data.item}`;  // Show the date and item name
+                    newRequestItem.className = 'list-group-item'; // Add Bootstrap list group item class
+                    newRequestItem.style.backgroundColor = '#f8f9fa'; // Add some styling
+                    newRequestItem.style.padding = '10px';
+                    newRequestItem.style.borderRadius = '4px';
+                    requestList.appendChild(newRequestItem);
+                } else if (data.status === 'error') {
+                    alert(data.message);  // Show the error message
+                } else {
+                    alert("Failed to submit request.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred. Please try again.");
+            });
+        }
+    }
+</script>
+
+{% endblock %}

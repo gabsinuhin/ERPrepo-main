@@ -1,0 +1,45 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="container mt-5" style="color: gold;">
+    <h2 class="text-center mb-4" style="color: gold; text-shadow: 1px 1px 2px black;">Receipt</h2>
+    <div class="card mb-4" style="background-color: black; border: 1px solid gold;">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <h5 class="card-title" style="color: gold;">{{ product_request.product.name }}</h5>
+                <p class="card-text"><strong>Order Date:</strong> {{ product_request.created_at|date:"F d, Y H:i" }}</p>
+            </div>
+            <hr style="border-color: gold;">
+            <div class="mb-3">
+                <p class="card-text"><strong>Price:</strong> ${{ product_request.product.price|floatformat:2 }}</p>
+                <p class="card-text"><strong>SKU:</strong> {{ product_request.product.sku }}</p>
+                <p class="card-text"><strong>Description:</strong> {{ product_request.product.description }}</p>
+                <p class="card-text"><strong>Quantity Requested:</strong> {{ product_request.quantity_requested }}</p>
+            </div>
+            <hr style="border-color: gold;">
+            <div class="mb-3">
+                <p class="card-text"><strong>Total Cost:</strong> ${{ total_cost|floatformat:2 }}</p>
+                <p class="card-text"><strong>Tax (0.1%):</strong> ${{ tax|floatformat:2 }}</p>
+                <p class="card-text"><strong>Shipping Fee:</strong> ${{ shipping_fee|floatformat:2 }}</p>
+                <p class="card-text"><strong>Total Cost with Tax and Shipping:</strong> ${{ total_with_tax_and_shipping|floatformat:2 }}</p>
+            </div>
+            <hr style="border-color: gold;">
+            <h4 class="mt-4" style="color: gold;">Customer Information</h4>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Mobile Number:</strong> {{ user_profile.mobile_number }}</p>
+            <p><strong>Business Title:</strong> {{ user_profile.business_title }}</p>
+            <hr style="border-color: gold;">
+            <div class="text-center mt-4">
+                <a href="{% url 'homepage' %}" class="btn"
+                   style="background-color: black; color: gold; border: 1px solid gold;">
+                    Back to Home
+                </a>
+                <a href="{% url 'request_credit_memo' product_request.id %}" class="btn"
+                   style="background-color: black; color: gold; border: 1px solid gold;">
+                    Request Credit Memo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

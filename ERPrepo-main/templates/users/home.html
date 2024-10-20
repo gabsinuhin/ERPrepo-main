@@ -1,0 +1,111 @@
+{% extends 'users/base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<!-- Fullscreen Hero with Background Image -->
+<div class="hero-fullscreen position-relative d-flex align-items-center justify-content-center"
+     style="height: 100vh; background: url('{% static "images/hero-bg.jpg" %}') no-repeat center center/cover;">
+    <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0, 0, 0, 0.6);"></div>
+    <div class="hero-text text-center text-white animate__animated animate__fadeInDown" style="z-index: 1;">
+        <h1 style="font-family: 'Raleway', sans-serif; font-size: 4rem; font-weight: bold;">ERP, Reimagined</h1>
+        <p class="lead mt-4" style="font-size: 1.5rem; font-family: 'Poppins', sans-serif;">Built for speed. Made to scale. Designed to impress.</p>
+        <a href="#get-started" class="btn btn-explode mt-5 px-5 py-3 pulse-effect"
+           style="background-color: #ffffff; color: #333; font-size: 1.2rem; font-weight: bold; border-radius: 30px; transition: background-color 0.3s;"
+           onmouseover="this.style.backgroundColor='#f1f1f1';" onmouseout="this.style.backgroundColor='#ffffff';">Get Started Now</a>
+    </div>
+</div>
+
+<!-- Features Section with Images -->
+<div class="container my-5" id="features">
+    <h2 class="text-center fw-bold mb-5" style="font-size: 2.5rem; font-family: 'Poppins', sans-serif;">Explore Our Features</h2>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <div class="feature-box hover-3d-effect position-relative">
+                <img src="{% static 'images/feature-speed.jpg' %}" alt="Lightning Fast" class="img-fluid mb-3" style="border-radius: 10px;">
+                <i class="bi bi-speedometer2 display-4 mb-2 text-primary"></i>
+                <h5 class="fw-bold" style="font-family: 'Poppins', sans-serif;">Lightning Fast</h5>
+                <p style="font-family: 'Poppins', sans-serif;">Experience blazing speed and seamless operations across all modules.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="feature-box hover-3d-effect position-relative">
+                <img src="{% static 'images/feature-cloud.jpg' %}" alt="Cloud-Based" class="img-fluid mb-3" style="border-radius: 10px;">
+                <i class="bi bi-cloud-fill display-4 mb-2 text-primary"></i>
+                <h5 class="fw-bold" style="font-family: 'Poppins', sans-serif;">Cloud-Based</h5>
+                <p style="font-family: 'Poppins', sans-serif;">Access anytime, anywhere with secure cloud-based infrastructure.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="feature-box hover-3d-effect position-relative">
+                <img src="{% static 'images/feature-security.jpg' %}" alt="Bulletproof Security" class="img-fluid mb-3" style="border-radius: 10px;">
+                <i class="bi bi-shield-lock display-4 mb-2 text-primary"></i>
+                <h5 class="fw-bold" style="font-family: 'Poppins', sans-serif;">Bulletproof Security</h5>
+                <p style="font-family: 'Poppins', sans-serif;">Your data is protected with the highest level of encryption.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Centered Testimonials Carousel -->
+<div class="container my-5" id="testimonials">
+    <h2 class="text-center fw-bold mb-5" style="font-size: 2.5rem; font-family: 'Poppins', sans-serif;">What Our Clients Say</h2>
+    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner text-center">
+            <!-- Testimonial 1 -->
+            <div class="carousel-item active">
+                <div class="testimonial p-4 shadow-sm mx-auto"
+                     style="max-width: 600px; background: url('{% static "images/testimonial-bg1.jpg" %}') no-repeat center center/cover; border-radius: 10px; color: white;">
+                    <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0, 0, 0, 0.5); border-radius: 10px;"></div>
+                    <p class="lead" style="position: relative; z-index: 1; font-family: 'Poppins', sans-serif;">"Absolutely revolutionary! ERP has never been this user-friendly."</p>
+                    <h5 class="fw-bold" style="position: relative; z-index: 1; font-family: 'Poppins', sans-serif;">- John Doe, CEO of BestCorp</h5>
+                </div>
+            </div>
+            <!-- Testimonial 2 -->
+            <div class="carousel-item">
+                <div class="testimonial p-4 shadow-sm mx-auto"
+                     style="max-width: 600px; background: url('{% static "images/testimonial-bg2.jpg" %}') no-repeat center center/cover; border-radius: 10px; color: white;">
+                    <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0, 0, 0, 0.5); border-radius: 10px;"></div>
+                    <p class="lead" style="position: relative; z-index: 1; font-family: 'Poppins', sans-serif;">"Saves time, money, and a whole lot of headaches. A++!"</p>
+                    <h5 class="fw-bold" style="position: relative; z-index: 1; font-family: 'Poppins', sans-serif;">- Jane Smith, Founder of XYZ Inc.</h5>
+                </div>
+            </div>
+            <!-- Testimonial 3 -->
+            <div class="carousel-item">
+                <div class="testimonial p-4 shadow-sm mx-auto"
+                     style="max-width: 600px; background: url('{% static "images/testimonial-bg3.jpg" %}') no-repeat center center/cover; border-radius: 10px; color: white;">
+                    <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0, 0, 0, 0.5); border-radius: 10px;"></div>
+                    <p class="lead" style="position: relative; z-index: 1; font-family: 'Poppins', sans-serif;">"This ERP system is a must-have for any serious business."</p>
+                    <h5 class="fw-bold" style="position: relative; z-index: 1; font-family: 'Poppins', sans-serif;">- Sarah Lee, Operations Manager at BuildIt</h5>
+                </div>
+            </div>
+        </div>
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<!-- About Us & Social Media Section -->
+<div class="container my-5" id="about-us">
+    <h2 class="text-center fw-bold mb-4" style="font-size: 2.5rem; font-family: 'Poppins', sans-serif;">About Us</h2>
+    <p class="text-center" style="font-size: 1.2rem; font-family: 'Poppins', sans-serif;">We are a leading provider of ERP solutions, dedicated to transforming the way businesses operate with innovative, user-friendly software. Our mission is to deliver the best tools that empower growth, efficiency, and scalability.</p>
+    <!-- Social Media Icons -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="#" class="me-3"><i class="bi bi-facebook" style="font-size: 2rem;"></i></a>
+        <a href="#" class="me-3"><i class="bi bi-twitter" style="font-size: 2rem;"></i></a>
+        <a href="#" class="me-3"><i class="bi bi-linkedin" style="font-size: 2rem;"></i></a>
+        <a href="#"><i class="bi bi-instagram" style="font-size: 2rem;"></i></a>
+    </div>
+</div>
+
+{% endblock content %}

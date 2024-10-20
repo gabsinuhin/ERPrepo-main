@@ -1,0 +1,30 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="container mt-5" style="color: gold;">
+    <h2 class="text-center mb-4" style="color: gold; text-shadow: 1px 1px 2px black;">Edit Product Request - Issue Credit Memo</h2>
+    <div class="card" style="background-color: black; border: 1px solid gold;">
+        <div class="card-body">
+            <form method="post" style="color: gold;">
+                {% csrf_token %}
+
+                <!-- Render form fields with custom styles -->
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+
+                <!-- Save Changes Button -->
+                <button type="submit" class="btn"
+                        style="background-color: gold; color: black; font-weight: bold; border: 1px solid gold;">
+                    Save Changes
+                </button>
+
+                <!-- Cancel Button -->
+                <a href="{% url 'receipt' product_request.id %}" class="btn"
+                   style="background-color: black; color: gold; font-weight: bold; border: 1px solid gold;">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

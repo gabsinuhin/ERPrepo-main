@@ -1,0 +1,55 @@
+{% extends 'users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<div class="container" style="display: flex;">
+
+
+    <div class="main-content" style="width: 80%; padding: 50px;"> <!-- Add main content div -->
+        <h2>My Messages and Replies</h2>
+        {% if message_replies %}
+            <ul class="list-group">
+                {% for message, replies in message_replies.items %}
+                <li class="list-group-item">
+                    <strong>Message:</strong> {{ message.content }}<br>
+                    <strong>Sent on:</strong> {{ message.created_at|date:"M d, Y, H:i" }}<br>
+
+                    <!-- Check if the message has an image -->
+                    {% if message.image %}
+                        <div class="mt-2">
+                            <strong>Image:</strong><br>
+                            <img src="{{ message.image.url }}" alt="Message Image" class="img-fluid" style="max-height: 200px; max-width: 100%; object-fit: cover;">
+                        </div>
+                    {% endif %}
+
+                    <strong>Replies:</strong>
+                    <ul>
+                        {% for reply in replies %}
+                        <li>
+                            <strong>Replied by:</strong> {{ reply.user.username }}<br>
+                            <strong>Reply:</strong> {{ reply.content }}<br>
+                            <strong>Replied on:</strong> {{ reply.created_at|date:"M d, Y, H:i" }}<br>
+
+                            <!-- Check if the reply has an image -->
+                            {% if reply.image %}
+                                <div class="mt-2">
+                                    <strong>Image:</strong><br>
+                                    <img src="{{ reply.image.url }}" alt="Reply Image" class="img-fluid" style="max-height: 200px; max-width: 100%; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                        </li>
+                        {% empty %}
+                        <li>No replies yet.</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No messages found.</p>
+        {% endif %}
+    </div> <!-- End of main content div -->
+</div>
+{% endblock %}

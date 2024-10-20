@@ -1,0 +1,84 @@
+{% extends 'users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+<div class="container" style="margin-top: 80px; max-width: 500px;">
+    <div class="card shadow-lg" style="background: linear-gradient(145deg, #1a1a1a, #000); border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);">
+        <div class="card-body p-5">
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="text-center mb-4" style="color: #FFD700; font-weight: bold; font-size: 2rem; letter-spacing: 1.5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); animation: glow 2s infinite alternate;">
+                        Sign In Now
+                    </legend>
+                    {{ form|crispy }}  <!-- Render the form using crispy_forms -->
+                </fieldset>
+                <div class="d-grid mt-4">
+                    <button class="btn btn-primary btn-block" style="background: linear-gradient(to right, #FFD700, #e6ac00); color: black; border: none; border-radius: 30px; padding: 15px; font-weight: bold; font-size: 1.3rem; box-shadow: 0 5px 25px rgba(255, 215, 0, 0.7); transition: all 0.3s ease;">
+                        Sign In
+                    </button>
+                </div>
+                <div class="form-group mt-4 text-center">
+                    <small class="text-muted">Don't have an account yet? <a href="{% url 'register' %}" style="color: #FFD700; text-decoration: none; font-weight: bold; transition: color 0.3s ease;">Sign Up Today</a></small>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        animation: fadeInUp 1s ease; /* Smooth slide-up animation */
+    }
+    .form-group legend {
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* Stronger glow */
+        font-size: 2rem;
+        animation: glow 2s infinite alternate;
+    }
+    .btn-primary {
+        background: linear-gradient(to right, #FFD700, #e6ac00);
+        color: black;
+        font-size: 1.3rem;
+        padding: 15px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 5px 25px rgba(255, 215, 0, 0.7);
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(to right, #e6ac00, #cc9a00); /* Darker gold */
+        transform: scale(1.1); /* Bigger scale on hover */
+        box-shadow: 0 10px 35px rgba(255, 215, 0, 0.9); /* Brighter glow */
+    }
+    .form-group a {
+        font-weight: bold;
+        color: #FFD700;
+        transition: color 0.3s ease;
+    }
+    .form-group a:hover {
+        color: #e6ac00; /* Darker gold */
+        text-decoration: underline;
+    }
+    @keyframes glow {
+        from {
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+        to {
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

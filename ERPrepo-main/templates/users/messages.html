@@ -1,0 +1,36 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Your Sent Messages</h2>
+    {% if messages %}
+        <ul class="list-group">
+            {% for message in messages %}
+            <li class="list-group-item">
+                <strong>Sent on:</strong> {{ message.created_at|date:"M d, Y, H:i" }}<br>
+                <strong>Message:</strong> {{ message.content }}<br>
+
+                <!-- Check if the message has an image -->
+                {% if message.image %}
+                    <div class="mt-2">
+                        <strong>Image:</strong><br>
+                        <img src="{{ message.image.url }}" alt="Message Image" class="img-fluid" style="max-height: 200px; max-width: 100%; object-fit: cover;">
+                    </div>
+                {% endif %}
+
+                <!-- Delete Button -->
+                <form method="POST" action="{% url 'delete_message' message.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this message?');">Delete</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't sent any messages yet.</p>
+    {% endif %}
+
+    <a href="{% url 'replies' %}" class="btn btn-primary me-2" id="header-links">Check For Replies</a>
+</div>
+{% endblock %}
